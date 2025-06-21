@@ -41,7 +41,7 @@ app.get("/", (req: Request, res: Response) => {
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       }
       h1 {
-        color: #1d4ed8;
+        color:rgb(0, 0, 0);
         font-size: 2.5rem;
         margin-bottom: 10px;
       }
