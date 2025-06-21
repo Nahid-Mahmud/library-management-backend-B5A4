@@ -1,12 +1,13 @@
 import { model, Schema } from "mongoose";
 import { IBook } from "./book.interface";
 
-const bookSchema = new Schema<IBook>(
+export const bookSchema = new Schema<IBook>(
   {
     title: {
       type: String,
       required: [true, "Title is required"],
       trim: true,
+      index: true,
     },
     author: {
       type: String,
@@ -46,6 +47,22 @@ const bookSchema = new Schema<IBook>(
     versionKey: false,
   }
 );
+
+bookSchema.pre("save", async function (next) {
+  // check for duplicate ISBN and book title
+
+  const existingBook = await Book.findOne({
+    $or: [{ isbn: this.isbn }, { title: this.title, author: this.author }],
+  });
+  if (existingBook) {
+    const error = new Error("A book with the same ISBN or title by the same author already exists.");
+    error.name = "DuplicateBookError";
+    return next(error);
+  }
+  console.log("No duplicate found, proceeding with save.");
+
+  next();
+});
 
 const Book = model<IBook>("Book", bookSchema);
 
