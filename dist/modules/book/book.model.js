@@ -17,6 +17,7 @@ exports.bookSchema = new mongoose_1.Schema({
         required: [true, "Title is required"],
         trim: true,
         index: true,
+        unique: true,
     },
     author: {
         type: String,
@@ -35,6 +36,8 @@ exports.bookSchema = new mongoose_1.Schema({
         type: String,
         required: [true, "ISBN is required"],
         trim: true,
+        unique: true,
+        indexes: true,
     },
     description: {
         type: String,
@@ -57,7 +60,6 @@ exports.bookSchema = new mongoose_1.Schema({
 exports.bookSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         // check for duplicate ISBN and book title
-        console.log("Checking for duplicate ISBN and book title...");
         const existingBook = yield Book.findOne({
             $or: [{ isbn: this.isbn }, { title: this.title, author: this.author }],
         });
@@ -66,7 +68,7 @@ exports.bookSchema.pre("save", function (next) {
             error.name = "DuplicateBookError";
             return next(error);
         }
-        console.log("No duplicate found, proceeding with save.");
+        // console.log("No duplicate found, proceeding with save.");
         next();
     });
 });
