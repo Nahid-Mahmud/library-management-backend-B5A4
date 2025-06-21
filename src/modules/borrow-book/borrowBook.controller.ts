@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import BorrowBook from "./borrowBook.model";
 
-const borrowBook = async (req: Request, res: Response) => {
+const borrowBookCreation = async (req: Request, res: Response) => {
   const body = req.body;
 
   try {
@@ -22,6 +22,50 @@ const borrowBook = async (req: Request, res: Response) => {
   }
 };
 
+const borrowBookSummary = async (req: Request, res: Response) => {
+  try {
+    // using aggregation
+    const borrowedBooks = await BorrowBook.aggregate([
+      // pipeline 1
+      {
+        $group: {
+          _id: "$book",
+          totalQuantity: { $sum: "$quantity" },
+        },
+      },
+      {
+        $lookup: {
+          from: "books",
+          localField: "_id",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalQuantity: 1,
+          book: {
+            title: 1,
+            isbn: 1,
+          },
+        },
+      },
+    ]);
+    res.status(200).json({
+      success: true,
+      data: borrowedBooks,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      message: "Failed to fetch borrowed books",
+      success: false,
+      error: Object.keys(error).length !== 0 ? error : error.message,
+    });
+  }
+};
+
 export const BorrowBookController = {
-  borrowBook,
+  borrowBookCreation,
+  borrowBookSummary,
 };
