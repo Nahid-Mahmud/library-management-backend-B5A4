@@ -25,7 +25,7 @@ app.get("/", (req: Request, res: Response) => {
     <style>
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(to right, #dbeafe, #f0f9ff);
+        background: white;
         margin: 0;
         padding: 0;
         display: flex;
