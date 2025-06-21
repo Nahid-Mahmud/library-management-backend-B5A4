@@ -62,7 +62,7 @@ bookSchema.pre("save", async function (next) {
     error.name = "DuplicateBookError";
     return next(error);
   }
-  console.log("No duplicate found, proceeding with save.");
+  // console.log("No duplicate found, proceeding with save.");
 
   next();
 });
