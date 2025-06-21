@@ -41,7 +41,7 @@ borrowBookSchema.method("borrowBook", async function (quantity: number) {
   const bookId = this.book;
 
   const requestedBook = await Book.findById(bookId);
-  console.log(`Requested book: ${requestedBook}`);
+  // console.log(`Requested book: ${requestedBook}`);
 
   if (!requestedBook) {
     throw new Error("Book not found");
@@ -53,8 +53,18 @@ borrowBookSchema.method("borrowBook", async function (quantity: number) {
   console.log(`Borrowing ${quantity} of book with ID: ${bookId}`);
 });
 
+borrowBookSchema.post("save", async function (doc: IBorrowBook) {
+  const bookId = this.book;
+  await Book.findByIdAndUpdate(bookId, {
+    $inc: {
+      copies: -doc.quantity,
+    },
+  });
+});
+
 const BorrowBook = model<IBorrowBook, Model<IBorrowBook, {}, BorrowBooksInstanceMethods>>(
   "BorrowBook",
   borrowBookSchema
 );
+
 export default BorrowBook;
