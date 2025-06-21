@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IBook } from "./book.interface";
+import BorrowBook from "../borrow-book/borrowBook.model";
 
 export const bookSchema = new Schema<IBook>(
   {
@@ -65,6 +66,13 @@ bookSchema.pre("save", async function (next) {
   // console.log("No duplicate found, proceeding with save.");
 
   next();
+});
+
+bookSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    await BorrowBook.deleteMany({ book: doc._id });
+    console.log(`Deleted borrow records for book with ID: ${doc._id}`);
+  }
 });
 
 const Book = model<IBook>("Book", bookSchema);

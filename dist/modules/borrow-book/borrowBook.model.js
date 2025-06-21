@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
+const book_model_1 = __importDefault(require("../book/book.model"));
 const borrowBookSchema = new mongoose_1.Schema({
     book: {
         type: mongoose_1.Schema.Types.ObjectId,
@@ -43,7 +47,25 @@ borrowBookSchema.method("borrowBook", function (quantity) {
     return __awaiter(this, void 0, void 0, function* () {
         //   check the books availability
         const bookId = this.book;
+        const requestedBook = yield book_model_1.default.findById(bookId);
+        // console.log(`Requested book: ${requestedBook}`);
+        if (!requestedBook) {
+            throw new Error("Book not found");
+        }
+        if (requestedBook.copies < quantity) {
+            throw new Error("Not enough books available");
+        }
         console.log(`Borrowing ${quantity} of book with ID: ${bookId}`);
+    });
+});
+borrowBookSchema.post("save", function (doc) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const bookId = this.book;
+        yield book_model_1.default.findByIdAndUpdate(bookId, {
+            $inc: {
+                copies: -doc.quantity,
+            },
+        });
     });
 });
 const BorrowBook = (0, mongoose_1.model)("BorrowBook", borrowBookSchema);
