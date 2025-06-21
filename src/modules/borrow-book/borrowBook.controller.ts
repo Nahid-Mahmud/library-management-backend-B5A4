@@ -3,9 +3,10 @@ import BorrowBook from "./borrowBook.model";
 
 const borrowBook = async (req: Request, res: Response) => {
   const body = req.body;
-  const newBorrowedBook = new BorrowBook(body);
 
   try {
+    const newBorrowedBook = new BorrowBook(body);
+    await newBorrowedBook.borrowBook(body.quantity);
     const savedBorrowedBook = await newBorrowedBook.save();
     res.status(201).json({
       success: true,
@@ -16,7 +17,11 @@ const borrowBook = async (req: Request, res: Response) => {
     res.status(500).json({
       message: "Failed to borrow book",
       success: false,
-      error,
+      error: Object.keys(error).length !== 0 ? error : error.message,
     });
   }
+};
+
+export const BorrowBookController = {
+  borrowBook,
 };

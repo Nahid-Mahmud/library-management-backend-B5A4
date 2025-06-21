@@ -1,5 +1,7 @@
 import { Model, model, Schema } from "mongoose";
 import { BorrowBooksInstanceMethods, IBorrowBook } from "./borrowBook.interface";
+import Book from "../book/book.model";
+import { IBook } from "../book/book.interface";
 
 const borrowBookSchema = new Schema<IBorrowBook, Model<IBorrowBook, {}, BorrowBooksInstanceMethods>>(
   {
@@ -37,6 +39,17 @@ const borrowBookSchema = new Schema<IBorrowBook, Model<IBorrowBook, {}, BorrowBo
 borrowBookSchema.method("borrowBook", async function (quantity: number) {
   //   check the books availability
   const bookId = this.book;
+
+  const requestedBook = await Book.findById(bookId);
+  console.log(`Requested book: ${requestedBook}`);
+
+  if (!requestedBook) {
+    throw new Error("Book not found");
+  }
+  if (requestedBook.copies < quantity) {
+    throw new Error("Not enough books available");
+  }
+
   console.log(`Borrowing ${quantity} of book with ID: ${bookId}`);
 });
 
