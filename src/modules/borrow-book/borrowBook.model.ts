@@ -1,7 +1,7 @@
-import { model, Schema } from "mongoose";
-import { IBorrowBook } from "./borrowBook.interface";
+import { Model, model, Schema } from "mongoose";
+import { BorrowBooksInstanceMethods, IBorrowBook } from "./borrowBook.interface";
 
-const borrowBookSchema = new Schema<IBorrowBook>(
+const borrowBookSchema = new Schema<IBorrowBook, Model<IBorrowBook, {}, BorrowBooksInstanceMethods>>(
   {
     book: {
       type: Schema.Types.ObjectId,
@@ -33,5 +33,15 @@ const borrowBookSchema = new Schema<IBorrowBook>(
   }
 );
 
-const BorrowBook = model("BorrowBook", borrowBookSchema);
+// Add instance methods to the Mongoose schema, not the Zod schema
+borrowBookSchema.method("borrowBook", async function (quantity: number) {
+  //   check the books availability
+  const bookId = this.book;
+  console.log(`Borrowing ${quantity} of book with ID: ${bookId}`);
+});
+
+const BorrowBook = model<IBorrowBook, Model<IBorrowBook, {}, BorrowBooksInstanceMethods>>(
+  "BorrowBook",
+  borrowBookSchema
+);
 export default BorrowBook;

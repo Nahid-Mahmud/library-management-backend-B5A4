@@ -5,3 +5,7 @@ export interface IBorrowBook {
   quantity: number;
   dueDate: Date;
 }
+
+export interface BorrowBooksInstanceMethods {
+  borrowBook(quantity: string): void;
+}
