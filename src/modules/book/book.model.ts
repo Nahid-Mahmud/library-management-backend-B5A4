@@ -8,6 +8,7 @@ export const bookSchema = new Schema<IBook>(
       required: [true, "Title is required"],
       trim: true,
       index: true,
+      unique: true,
     },
     author: {
       type: String,
@@ -26,6 +27,8 @@ export const bookSchema = new Schema<IBook>(
       type: String,
       required: [true, "ISBN is required"],
       trim: true,
+      unique: true,
+      indexes: true,
     },
     description: {
       type: String,
