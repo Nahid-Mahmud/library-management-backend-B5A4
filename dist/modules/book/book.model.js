@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bookSchema = void 0;
 const mongoose_1 = require("mongoose");
+const borrowBook_model_1 = __importDefault(require("../borrow-book/borrowBook.model"));
 exports.bookSchema = new mongoose_1.Schema({
     title: {
         type: String,
@@ -70,6 +74,14 @@ exports.bookSchema.pre("save", function (next) {
         }
         // console.log("No duplicate found, proceeding with save.");
         next();
+    });
+});
+exports.bookSchema.post("findOneAndDelete", function (doc) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (doc) {
+            yield borrowBook_model_1.default.deleteMany({ book: doc._id });
+            console.log(`Deleted borrow records for book with ID: ${doc._id}`);
+        }
     });
 });
 const Book = (0, mongoose_1.model)("Book", exports.bookSchema);
