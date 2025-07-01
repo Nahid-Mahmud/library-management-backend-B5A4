@@ -54,12 +54,24 @@ borrowBookSchema.method("borrowBook", async function (quantity: number) {
 });
 
 borrowBookSchema.post("save", async function (doc: IBorrowBook) {
-  const bookId = this.book;
-  await Book.findByIdAndUpdate(bookId, {
-    $inc: {
-      copies: -doc.quantity,
-    },
-  });
+  try {
+    const bookId = this.book;
+
+    // Decrease the number of copies
+    const updatedBook = await Book.findByIdAndUpdate(bookId, { $inc: { copies: -doc.quantity } }, { new: true });
+
+    if (!updatedBook) {
+      console.error(`Book with ID ${bookId} not found.`);
+      return;
+    }
+
+    // If no copies are left, mark as unavailable
+    if (updatedBook.copies === 0 && updatedBook.available !== false) {
+      await Book.findByIdAndUpdate(bookId, { available: false });
+    }
+  } catch (error) {
+    console.error("Error in borrowBookSchema post-save hook:", error);
+  }
 });
 
 const BorrowBook = model<IBorrowBook, Model<IBorrowBook, {}, BorrowBooksInstanceMethods>>(
