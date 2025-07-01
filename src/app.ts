@@ -7,6 +7,18 @@ app.use(express.json());
 
 // root server route
 
+const allowedOrigins = ["http://localhost:5173"];
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin as string)) {
+    res.setHeader("Access-Control-Allow-Origin", origin as string);
+  }
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
 app.use("/api", router);
 
 app.get("/", (req: Request, res: Response) => {
