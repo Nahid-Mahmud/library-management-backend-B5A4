@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import BorrowBook from "./borrowBook.model";
+import { sendResponse } from "../../helper/sendResponse";
 
 const borrowBookCreation = async (req: Request, res: Response) => {
   const body = req.body;
@@ -8,17 +9,9 @@ const borrowBookCreation = async (req: Request, res: Response) => {
     const newBorrowedBook = new BorrowBook(body);
     await newBorrowedBook.borrowBook(body.quantity);
     const savedBorrowedBook = await newBorrowedBook.save();
-    res.status(201).json({
-      success: true,
-      message: "Book borrowed successfully",
-      data: savedBorrowedBook,
-    });
+    sendResponse(res, 201, true, "Book borrowed successfully", savedBorrowedBook);
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to borrow book",
-      success: false,
-      error: Object.keys(error).length !== 0 ? error : error.message,
-    });
+    sendResponse(res, 400, false, "Failed to borrow book", error);
   }
 };
 
@@ -52,16 +45,9 @@ const borrowBookSummary = async (req: Request, res: Response) => {
         },
       },
     ]);
-    res.status(200).json({
-      success: true,
-      data: borrowedBooks,
-    });
+    sendResponse(res, 200, true, "Borrowed books summary fetched successfully", borrowedBooks);
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch borrowed books",
-      success: false,
-      error: Object.keys(error).length !== 0 ? error : error.message,
-    });
+    sendResponse(res, 500, false, "Failed to fetch borrowed books summary", error);
   }
 };
 
