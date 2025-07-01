@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
+import { sendResponse } from "../../helper/sendResponse";
 import Book from "./book.model";
-import bookCreationSchema from "./book.validator";
 
 // create book entry
 
@@ -8,22 +8,11 @@ const addBook = async (req: Request, res: Response) => {
   const body = req.body;
 
   try {
-    // const sanitizedBody = bookCreationSchema.parseAsync(body);
-
     const newBook = new Book(body);
-
     const savedBook = await newBook.save();
-    res.status(201).json({
-      success: true,
-      message: "Book created successfully",
-      data: savedBook,
-    });
+    sendResponse(res, 201, true, "Book created successfully", savedBook);
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-      error,
-    });
+    sendResponse(res, 400, false, error.message, error);
   }
 };
 
