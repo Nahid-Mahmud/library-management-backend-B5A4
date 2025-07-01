@@ -23,23 +23,11 @@ const getAllBooks = async (req: Request, res: Response) => {
     const allBooks = await Book.find({});
 
     if (allBooks.length === 0) {
-      res.status(404).json({
-        success: false,
-        message: "No books found",
-        data: [],
-      });
+      sendResponse(res, 404, false, "No books found", []);
     }
-    res.status(200).json({
-      success: true,
-      message: "Books retrieved successfully",
-      data: allBooks,
-    });
+    sendResponse(res, 200, true, "Books retrieved successfully", allBooks);
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to retrieve books",
-      success: false,
-      error,
-    });
+    sendResponse(res, 500, false, "Failed to retrieve books", error);
   }
 };
 
@@ -49,17 +37,9 @@ const getBookById = async (req: Request, res: Response) => {
   const bookId = req.params.bookId;
   try {
     const book = await Book.findById(bookId);
-    res.status(200).json({
-      success: true,
-      message: "Book retrieved successfully",
-      data: book,
-    });
+    sendResponse(res, 200, true, "Book retrieved successfully", book);
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to retrieve book",
-      success: false,
-      error,
-    });
+    sendResponse(res, 500, false, "Failed to retrieve book", error);
   }
 };
 
@@ -78,17 +58,10 @@ const updateBookById = async (req: Request, res: Response) => {
         new: true,
       }
     );
-    res.status(200).json({
-      success: true,
-      message: "Book updated successfully",
-      data: updatedBook,
-    });
+
+    sendResponse(res, 200, true, "Book updated successfully", updatedBook);
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to update book",
-      success: false,
-      error,
-    });
+    sendResponse(res, 500, false, "Failed to update book", error);
   }
 };
 
@@ -98,17 +71,9 @@ const deleteBookById = async (req: Request, res: Response) => {
   const bookId = req.params.bookId;
   try {
     await Book.findOneAndDelete({ _id: bookId });
-    res.status(200).json({
-      success: true,
-      message: "Book deleted successfully",
-      data: null,
-    });
+    sendResponse(res, 200, true, "Book deleted successfully");
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to delete book",
-      success: false,
-      error,
-    });
+    sendResponse(res, 500, false, "Failed to delete book", error);
   }
 };
 
