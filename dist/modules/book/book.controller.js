@@ -13,26 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookController = void 0;
+const sendResponse_1 = require("../../helper/sendResponse");
 const book_model_1 = __importDefault(require("./book.model"));
 // create book entry
 const addBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     try {
-        // const sanitizedBody = bookCreationSchema.parseAsync(body);
         const newBook = new book_model_1.default(body);
         const savedBook = yield newBook.save();
-        res.status(201).json({
-            success: true,
-            message: "Book created successfully",
-            data: savedBook,
-        });
+        (0, sendResponse_1.sendResponse)(res, 201, true, "Book created successfully", savedBook);
     }
     catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message,
-            error,
-        });
+        (0, sendResponse_1.sendResponse)(res, 400, false, error.message, error);
     }
 });
 // get all books
@@ -40,24 +32,12 @@ const getAllBooks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const allBooks = yield book_model_1.default.find({});
         if (allBooks.length === 0) {
-            res.status(404).json({
-                success: false,
-                message: "No books found",
-                data: [],
-            });
+            (0, sendResponse_1.sendResponse)(res, 404, false, "No books found", []);
         }
-        res.status(200).json({
-            success: true,
-            message: "Books retrieved successfully",
-            data: allBooks,
-        });
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Books retrieved successfully", allBooks);
     }
     catch (error) {
-        res.status(500).json({
-            message: "Failed to retrieve books",
-            success: false,
-            error,
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Failed to retrieve books", error);
     }
 });
 // get book by id
@@ -65,18 +45,10 @@ const getBookById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const bookId = req.params.bookId;
     try {
         const book = yield book_model_1.default.findById(bookId);
-        res.status(200).json({
-            success: true,
-            message: "Book retrieved successfully",
-            data: book,
-        });
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Book retrieved successfully", book);
     }
     catch (error) {
-        res.status(500).json({
-            message: "Failed to retrieve book",
-            success: false,
-            error,
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Failed to retrieve book", error);
     }
 });
 // update book by id
@@ -90,18 +62,10 @@ const updateBookById = (req, res) => __awaiter(void 0, void 0, void 0, function*
             runValidators: true,
             new: true,
         });
-        res.status(200).json({
-            success: true,
-            message: "Book updated successfully",
-            data: updatedBook,
-        });
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Book updated successfully", updatedBook);
     }
     catch (error) {
-        res.status(500).json({
-            message: "Failed to update book",
-            success: false,
-            error,
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Failed to update book", error);
     }
 });
 // delete book by id
@@ -109,18 +73,10 @@ const deleteBookById = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const bookId = req.params.bookId;
     try {
         yield book_model_1.default.findOneAndDelete({ _id: bookId });
-        res.status(200).json({
-            success: true,
-            message: "Book deleted successfully",
-            data: null,
-        });
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Book deleted successfully");
     }
     catch (error) {
-        res.status(500).json({
-            message: "Failed to delete book",
-            success: false,
-            error,
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Failed to delete book", error);
     }
 });
 exports.BookController = {

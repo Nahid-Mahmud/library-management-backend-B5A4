@@ -14,24 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BorrowBookController = void 0;
 const borrowBook_model_1 = __importDefault(require("./borrowBook.model"));
+const sendResponse_1 = require("../../helper/sendResponse");
 const borrowBookCreation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     try {
         const newBorrowedBook = new borrowBook_model_1.default(body);
         yield newBorrowedBook.borrowBook(body.quantity);
         const savedBorrowedBook = yield newBorrowedBook.save();
-        res.status(201).json({
-            success: true,
-            message: "Book borrowed successfully",
-            data: savedBorrowedBook,
-        });
+        (0, sendResponse_1.sendResponse)(res, 201, true, "Book borrowed successfully", savedBorrowedBook);
     }
     catch (error) {
-        res.status(500).json({
-            message: "Failed to borrow book",
-            success: false,
-            error: Object.keys(error).length !== 0 ? error : error.message,
-        });
+        (0, sendResponse_1.sendResponse)(res, 400, false, "Failed to borrow book", error);
     }
 });
 const borrowBookSummary = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -64,17 +57,10 @@ const borrowBookSummary = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 },
             },
         ]);
-        res.status(200).json({
-            success: true,
-            data: borrowedBooks,
-        });
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Borrowed books summary fetched successfully", borrowedBooks);
     }
     catch (error) {
-        res.status(500).json({
-            message: "Failed to fetch borrowed books",
-            success: false,
-            error: Object.keys(error).length !== 0 ? error : error.message,
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Failed to fetch borrowed books summary", error);
     }
 });
 exports.BorrowBookController = {

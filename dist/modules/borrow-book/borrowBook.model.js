@@ -60,12 +60,22 @@ borrowBookSchema.method("borrowBook", function (quantity) {
 });
 borrowBookSchema.post("save", function (doc) {
     return __awaiter(this, void 0, void 0, function* () {
-        const bookId = this.book;
-        yield book_model_1.default.findByIdAndUpdate(bookId, {
-            $inc: {
-                copies: -doc.quantity,
-            },
-        });
+        try {
+            const bookId = this.book;
+            // Decrease the number of copies
+            const updatedBook = yield book_model_1.default.findByIdAndUpdate(bookId, { $inc: { copies: -doc.quantity } }, { new: true });
+            if (!updatedBook) {
+                console.error(`Book with ID ${bookId} not found.`);
+                return;
+            }
+            // If no copies are left, mark as unavailable
+            if (updatedBook.copies === 0 && updatedBook.available !== false) {
+                yield book_model_1.default.findByIdAndUpdate(bookId, { available: false });
+            }
+        }
+        catch (error) {
+            console.error("Error in borrowBookSchema post-save hook:", error);
+        }
     });
 });
 const BorrowBook = (0, mongoose_1.model)("BorrowBook", borrowBookSchema);
