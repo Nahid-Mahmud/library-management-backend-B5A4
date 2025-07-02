@@ -11,8 +11,8 @@ export const sendResponse = <T>(
   statusCode: number,
   success: boolean,
   message: string,
-  meta?: Meta,
-  data?: T
+  data: T,
+  meta?: Meta
 ) => {
   res.status(statusCode).json({ success, message, data, meta });
 };
