@@ -19,15 +19,27 @@ const addBook = async (req: Request, res: Response) => {
 // get all books
 
 const getAllBooks = async (req: Request, res: Response) => {
+  // Pagination parameters
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 0;
+  const skip = (page - 1) * limit;
   try {
-    const allBooks = await Book.find({});
+    const allBooks = await Book.find({}).skip(skip).limit(limit).sort({ createdAt: -1 });
 
     if (allBooks.length === 0) {
       sendResponse(res, 404, false, "No books found", []);
     }
-    sendResponse(res, 200, true, "Books retrieved successfully", allBooks);
+    sendResponse(res, 200, true, "Books retrieved successfully", allBooks, {
+      page,
+      limit,
+      total: await Book.countDocuments(),
+    });
   } catch (error: any) {
-    sendResponse(res, 500, false, "Failed to retrieve books", error);
+    sendResponse(res, 500, false, "Failed to retrieve books", error, {
+      page,
+      limit,
+      total: await Book.countDocuments(),
+    });
   }
 };
 
