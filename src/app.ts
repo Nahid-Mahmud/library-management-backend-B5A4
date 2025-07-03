@@ -7,7 +7,7 @@ app.use(express.json());
 
 // root server route
 
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = ["http://localhost:5173","https://library-managemanet-b5a4-client.vercel.app"];
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   const origin = req.headers.origin;

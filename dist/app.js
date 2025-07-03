@@ -9,7 +9,7 @@ const routes_1 = require("./routes");
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json());
 // root server route
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = ["http://localhost:5173", "https://library-managemanet-b5a4-client.vercel.app"];
 exports.app.use((req, res, next) => {
     const origin = req.headers.origin;
     if (allowedOrigins.includes(origin)) {

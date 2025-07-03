@@ -29,15 +29,27 @@ const addBook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 // get all books
 const getAllBooks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 0;
+    const skip = (page - 1) * limit;
     try {
-        const allBooks = yield book_model_1.default.find({});
+        const allBooks = yield book_model_1.default.find({}).skip(skip).limit(limit).sort({ createdAt: -1 });
         if (allBooks.length === 0) {
             (0, sendResponse_1.sendResponse)(res, 404, false, "No books found", []);
         }
-        (0, sendResponse_1.sendResponse)(res, 200, true, "Books retrieved successfully", allBooks);
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Books retrieved successfully", allBooks, {
+            page,
+            limit,
+            total: yield book_model_1.default.countDocuments(),
+        });
     }
     catch (error) {
-        (0, sendResponse_1.sendResponse)(res, 500, false, "Failed to retrieve books", error);
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Failed to retrieve books", error, {
+            page,
+            limit,
+            total: yield book_model_1.default.countDocuments(),
+        });
     }
 });
 // get book by id
