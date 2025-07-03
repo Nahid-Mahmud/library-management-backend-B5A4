@@ -1,3 +1,4 @@
+import { Genre, IBook } from "./book.interface";
 import { Request, Response } from "express";
 import { sendResponse } from "../../helper/sendResponse";
 import Book from "./book.model";
@@ -89,10 +90,21 @@ const deleteBookById = async (req: Request, res: Response) => {
   }
 };
 
+// get all genre from types
+const getAllGenres = async (req: Request, res: Response) => {
+  try {
+    const genres: Genre[] = ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"];
+    sendResponse(res, 200, true, "Genres retrieved successfully", genres);
+  } catch (error) {
+    sendResponse(res, 500, false, "Failed to retrieve genres", error);
+  }
+};
+
 export const BookController = {
   addBook,
   getAllBooks,
   getBookById,
   updateBookById,
   deleteBookById,
+  getAllGenres,
 };
