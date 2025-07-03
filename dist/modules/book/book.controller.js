@@ -91,10 +91,21 @@ const deleteBookById = (req, res) => __awaiter(void 0, void 0, void 0, function*
         (0, sendResponse_1.sendResponse)(res, 500, false, "Failed to delete book", error);
     }
 });
+// get all genre from types
+const getAllGenres = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const genres = ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"];
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Genres retrieved successfully", genres);
+    }
+    catch (error) {
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Failed to retrieve genres", error);
+    }
+});
 exports.BookController = {
     addBook,
     getAllBooks,
     getBookById,
     updateBookById,
     deleteBookById,
+    getAllGenres,
 };
