@@ -35,12 +35,17 @@ const borrowBookSummary = async (req: Request, res: Response) => {
         },
       },
       {
+        $unwind: "$book",
+      },
+      {
         $project: {
           _id: 0,
           totalQuantity: 1,
           book: {
             title: 1,
             isbn: 1,
+            author: 1,
+            genre: 1,
           },
         },
       },
